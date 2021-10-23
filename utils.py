@@ -24,8 +24,6 @@ def connection():
     """
     connect = redis.Redis(host='localhost', port=6379)
 
-    print('Connection to server...')
-
     return connect
 
 
@@ -35,8 +33,6 @@ def disconnection(connect):
     """
     connect.connection_pool.disconnect()
 
-    print('Disconnecting from server...')
-
 
 def list_products():
     """
@@ -45,23 +41,23 @@ def list_products():
     connect = connection()
 
     try:
-        data = connect.keys(pattern='produtos:*')
+        data = connect.keys(pattern='products:*')
         if len(data) > 0:
             print('Listing products...')
             print('-------------------')
-            for keys in data:
-                product = connect.hgetall(keys)
-                print(f"ID: {str(keys, 'utf-8', 'ignore')}")
-                print(f"Product: {str(product[b'name'], 'utf-8', 'ignore')}")
-                print(f"Price: {str(product[b'price'], 'utf-8', 'ignore')}")
-                print(f"Stash: {str(product[b'stash'], 'utf-8', 'ignore')}")
+            for key in data:
+                product = connect.hgetall(key)
+                print(f"ID: {str(key, 'utf-8', 'ignore')}")
+                print(f"Product: {str(product[b'Name'], 'utf-8', 'ignore')}")
+                print(f"Price: {str(product[b'Price'], 'utf-8', 'ignore')}")
+                print(f"Stash: {str(product[b'Stash'], 'utf-8', 'ignore')}")
                 print('-------------------')
         else:
             print('There are no products registred')
     except redis.exceptions.ConnectionError as e:
         print(f'It was not possible to list the products: {e}')
 
-    disconnection(connect)
+        disconnection(connect)
 
 
 def insert_products():
@@ -75,7 +71,7 @@ def insert_products():
     stash = int(input('Product stash: '))
 
     product = {'Name': name, 'Price': price, 'Stash': stash}
-    key = f'product:{generate_id()}'
+    key = f'products:{generate_id()}'
 
     try:
         answer = connect.hmset(key, product)
@@ -87,7 +83,7 @@ def insert_products():
     except redis.exceptions.ConnectionError as e:
         print(f'It was not possible to insert the product: {e}')
 
-    disconnection(connect)
+        disconnection(connect)
 
 
 def update_product():
@@ -96,11 +92,11 @@ def update_product():
     """
     connect = connection()
 
-    key = input('Provide product key: ')
+    key = input('Provide product key to update: ')
 
-    name = input('Provide product name: ')
-    price = float(input('Provide product price: '))
-    stash = int(input('Provide stash: '))
+    name = input('Provide product name updated: ')
+    price = float(input('Provide product to update price: '))
+    stash = int(input('Provide update stash: '))
 
     product = {'Name': name, 'Price': price, 'Stash': stash}
 
@@ -113,7 +109,7 @@ def update_product():
     except redis.exceptions.ConnectionError as e:
         print(f'It was not possible to update the product: {e}')
 
-    disconnection(connect)
+        disconnection(connect)
 
 
 def delete_product():
@@ -133,6 +129,7 @@ def delete_product():
             print('There is no product with this key')
     except redis.exceptions.ConnectionError as e:
         print(f'Error connecting to Redis: {e}')
+        disconnection(connect)
 
 
 def menu():
