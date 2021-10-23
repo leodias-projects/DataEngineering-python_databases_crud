@@ -1,63 +1,68 @@
 
 
-def conectar():
+def connection():
     """
-    Função para conectar ao servidor
+    Function to connect to server
     """
-    print('Conectando ao servidor...')
-
-def desconectar():
-    """ 
-    Função para desconectar do servidor.
-    """
-    print('Desconectando do servidor...')
+    print('Connection to server...')
 
 
-def listar():
+def desconnection():
     """
-    Função para listar os produtos
+    Function to disconnect from server
     """
-    print('Listando produtos...')
+    print('Desconnecting from server...')
 
-def inserir():
-    """
-    Função para inserir um produto
-    """  
-    print('Inserindo produto...')
 
-def atualizar():
+def list_products():
     """
-    Função para atualizar um produto
+    Function to list products
     """
-    print('Atualizando produto...')
+    print('Listing products...')
 
-def deletar():
+
+def insert_products():
     """
-    Função para deletar um produto
-    """  
-    print('Deletando produto...')
+    Function to insert a product
+    """
+    print('Inserting a product...')
+
+
+def update_product():
+    """
+    Function to update a product
+    """
+    print('Updating product...')
+
+
+def delete_product():
+    """
+    Function to delete product
+    """
+    print('Deleting product...')
+
 
 def menu():
     """
-    Função para gerar o menu inicial
+    Function to generate main menu
     """
-    print('=========Gerenciamento de Produtos==============')
-    print('Selecione uma opção: ')
-    print('1 - Listar produtos.')
-    print('2 - Inserir produtos.')
-    print('3 - Atualizar produto.')
-    print('4 - Deletar produto.')
-    opcao = int(input())
-    if opcao in [1, 2, 3, 4]:
-        if opcao == 1:
-            listar()
-        elif opcao == 2:
-            inserir()
-        elif opcao == 3:
-            atualizar()
-        elif opcao == 4:
-            deletar()
+    print('=========Product management==============')
+    print('Selection one option: ')
+    print('1 - List products.')
+    print('2 - Insert product.')
+    print('3 - Update product.')
+    print('4 - Delete product.')
+    option = int(input())
+    if option in [1, 2, 3, 4]:
+        if option == 1:
+            list_products()
+        elif option == 2:
+            insert_products()
+        elif option == 3:
+            update_product()
+        elif option == 4:
+            delete_product()
         else:
-            print('Opção inválida')
+            print('Invalid option')
     else:
-        print('Opção inválida')
+        print('Invalid option')
