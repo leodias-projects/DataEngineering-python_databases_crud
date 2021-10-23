@@ -12,6 +12,7 @@ def generate_id():
             return key
 
         else:
+            connect.set('key', 1)
             return 1
     except redis.exceptions.ConnectionError as e:
         print(f'It was not possible to generate the key: {e}')
