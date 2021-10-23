@@ -1,7 +1,7 @@
 # python-redis-crud simple code
 
 This repository presents a simple CRUD code using Python and Redis.
-The objective is to elaborate a product database with the 
+The algorithm objective is to elaborate a product database with 
 products names, prices, and stash. The script has 7 functions 
 that work together to: **list all products**, **insert a product**,
 **update a product**, or **delete a product**.
