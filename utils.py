@@ -12,7 +12,6 @@ def generate_id():
             return key
 
         else:
-            connect.set('key', 1)
             return 1
     except redis.exceptions.ConnectionError as e:
         print(f'It was not possible to generate the key: {e}')
@@ -41,16 +40,16 @@ def list_products():
     connect = connection()
 
     try:
-        data = connect.keys(pattern='products:*')
+        data = connect.keys(pattern='product:*')
         if len(data) > 0:
             print('Listing products...')
             print('-------------------')
             for key in data:
                 product = connect.hgetall(key)
                 print(f"ID: {str(key, 'utf-8', 'ignore')}")
-                print(f"Product: {str(product[b'Name'], 'utf-8', 'ignore')}")
-                print(f"Price: {str(product[b'Price'], 'utf-8', 'ignore')}")
-                print(f"Stash: {str(product[b'Stash'], 'utf-8', 'ignore')}")
+                print(f"product: {str(product[b'product'], 'utf-8', 'ignore')}")
+                print(f"price: {str(product[b'price'], 'utf-8', 'ignore')}")
+                print(f"stash: {str(product[b'stash'], 'utf-8', 'ignore')}")
                 print('-------------------')
         else:
             print('There are no products registred')
@@ -60,7 +59,7 @@ def list_products():
         disconnection(connect)
 
 
-def insert_products():
+def insert_product():
     """
     Function to insert a product
     """
@@ -70,8 +69,8 @@ def insert_products():
     price = float(input('Product price: '))
     stash = int(input('Product stash: '))
 
-    product = {'Name': name, 'Price': price, 'Stash': stash}
-    key = f'products:{generate_id()}'
+    product = {'product': name, 'price': price, 'stash': stash}
+    key = f'product:{name}'
 
     try:
         answer = connect.hmset(key, product)
@@ -98,7 +97,7 @@ def update_product():
     price = float(input('Provide product to update price: '))
     stash = int(input('Provide update stash: '))
 
-    product = {'Name': name, 'Price': price, 'Stash': stash}
+    product = {'product': name, 'price': price, 'stash': stash}
 
     try:
         result = connect.hmset(key, product)
@@ -147,7 +146,7 @@ def menu():
         if option == 1:
             list_products()
         elif option == 2:
-            insert_products()
+            insert_product()
         elif option == 3:
             update_product()
         elif option == 4:
