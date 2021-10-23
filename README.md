@@ -26,4 +26,4 @@ the function will not execute.
 
 ## Delete function
 
-The delete function takes a product name and delete from de DB.
+The delete function takes a product name and delete it from de DB.
