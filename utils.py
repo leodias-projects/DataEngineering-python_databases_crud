@@ -5,11 +5,12 @@ def generate_id():
     try:
         connect = connection()
 
-        keys = connect.get('key')
+        key = connect.get('key')
 
-        if keys:
-            keys = connect.incr('key')
-            return keys
+        if key:
+            key = connect.incr('key')
+            return key
+
         else:
             connect.set('key', 1)
             return 1
@@ -74,10 +75,10 @@ def insert_products():
     stash = int(input('Product stash: '))
 
     product = {'Name': name, 'Price': price, 'Stash': stash}
-    keys = f'product:{generate_id()}'
+    key = f'product:{generate_id()}'
 
     try:
-        answer = connect.hmset(keys, product)
+        answer = connect.hmset(key, product)
 
         if answer:
             print(f'The product {name} was successfully inserted.')
@@ -93,14 +94,45 @@ def update_product():
     """
     Function to update a product
     """
-    print('Updating product...')
+    connect = connection()
+
+    key = input('Provide product key: ')
+
+    name = input('Provide product name: ')
+    price = float(input('Provide product price: '))
+    stash = int(input('Provide stash: '))
+
+    product = {'Name': name, 'Price': price, 'Stash': stash}
+
+    try:
+        result = connect.hmset(key, product)
+
+        if result:
+            print(f'The product {name} was successfully updated')
+
+    except redis.exceptions.ConnectionError as e:
+        print(f'It was not possible to update the product: {e}')
+
+    disconnection(connect)
 
 
 def delete_product():
     """
     Function to delete product
     """
-    print('Deleting product...')
+    connect = connection()
+
+    key = input('Provide product key: ')
+
+    try:
+        result = connect.delete(key)
+
+        if result == 1:
+            print('Product deleted')
+        else:
+            print('There is no product with this key')
+    except redis.exceptions.ConnectionError as e:
+        print(f'Error connecting to Redis: {e}')
 
 
 def menu():
