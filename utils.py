@@ -42,6 +42,7 @@ def list_products():
 
     try:
         data = connect.keys(pattern='product:*')
+
         if len(data) > 0:
             print('Listing products...')
             print('-------------------')
@@ -71,7 +72,7 @@ def insert_product():
     stash = int(input('Product stash: '))
 
     product = {'product': name, 'price': price, 'stash': stash}
-    key = f'product:{name}'
+    key = f'product:{generate_id()}'
 
     try:
         answer = connect.hmset(key, product)
@@ -92,19 +93,34 @@ def update_product():
     """
     connect = connection()
 
-    key = input('Provide product key to update: ')
+    old_given_name = input('Provide product name to update: ')
 
-    name = input('Provide product name updated: ')
-    price = float(input('Provide product to update price: '))
-    stash = int(input('Provide update stash: '))
+    name = input('Provide product new/updated name: ')
+    price = float(input('Provide product new/updated price: '))
+    stash = int(input('Provide new/updated stash: '))
 
-    product = {'product': name, 'price': price, 'stash': stash}
-
+    new_product = {'product': name, 'price': price, 'stash': stash}
     try:
-        result = connect.hmset(key, product)
+        data = connect.keys(pattern='product:*')
 
-        if result:
-            print(f'The product {name} was successfully updated')
+        match_flag = 0
+
+        for key in data:
+            product = connect.hgetall(key)
+            old_database_name = str(product[b'product'], 'utf-8', 'ignore')
+
+            if old_database_name == old_given_name:
+                key_string = key.decode('utf-8')
+                updating = connect.hmset(key_string, new_product)
+                print(key_string, product)
+                print(f'The product {old_given_name} was successfully updated')
+                match_flag += 1
+
+            else:
+                pass
+
+        if match_flag == 0:
+            print(f'There is no product {old_given_name} in database to be updated!')
 
     except redis.exceptions.ConnectionError as e:
         print(f'It was not possible to update the product: {e}')
