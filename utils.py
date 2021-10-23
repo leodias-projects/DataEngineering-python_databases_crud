@@ -1,6 +1,22 @@
 import redis
 
 
+def generate_id():
+    try:
+        connect = connection()
+
+        keys = connect.get('key')
+
+        if keys:
+            keys = connect.incr('key')
+            return keys
+        else:
+            connect.set('key', 1)
+            return 1
+    except redis.exceptions.ConnectionError as e:
+        print(f'It was not possible to generate the key: {e}')
+
+
 def connection():
     """
     Function to connect to server
@@ -25,14 +41,52 @@ def list_products():
     """
     Function to list products
     """
-    print('Listing products...')
+    connect = connection()
+
+    try:
+        data = connect.keys(pattern='produtos:*')
+        if len(data) > 0:
+            print('Listing products...')
+            print('-------------------')
+            for keys in data:
+                product = connect.hgetall(keys)
+                print(f"ID: {str(keys, 'utf-8', 'ignore')}")
+                print(f"Product: {str(product[b'name'], 'utf-8', 'ignore')}")
+                print(f"Price: {str(product[b'price'], 'utf-8', 'ignore')}")
+                print(f"Stash: {str(product[b'stash'], 'utf-8', 'ignore')}")
+                print('-------------------')
+        else:
+            print('There are no products registred')
+    except redis.exceptions.ConnectionError as e:
+        print(f'It was not possible to list the products: {e}')
+
+    disconnection(connect)
 
 
 def insert_products():
     """
     Function to insert a product
     """
-    print('Inserting a product...')
+    connect = connection()
+
+    name = input('Product name to insert: ')
+    price = float(input('Product price: '))
+    stash = int(input('Product stash: '))
+
+    product = {'Name': name, 'Price': price, 'Stash': stash}
+    keys = f'product:{generate_id()}'
+
+    try:
+        answer = connect.hmset(keys, product)
+
+        if answer:
+            print(f'The product {name} was successfully inserted.')
+        else:
+            print(f'It was not possible to insert the product')
+    except redis.exceptions.ConnectionError as e:
+        print(f'It was not possible to insert the product: {e}')
+
+    disconnection(connect)
 
 
 def update_product():
