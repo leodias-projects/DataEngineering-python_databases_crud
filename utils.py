@@ -1,17 +1,24 @@
+import redis
 
 
 def connection():
     """
     Function to connect to server
     """
+    connect = redis.Redis(host='localhost', port=6379)
+
     print('Connection to server...')
 
+    return connect
 
-def desconnection():
+
+def disconnection(connect):
     """
     Function to disconnect from server
     """
-    print('Desconnecting from server...')
+    connect.connection_pool.disconnect()
+
+    print('Disconnecting from server...')
 
 
 def list_products():
